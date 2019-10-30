@@ -92,6 +92,7 @@ class MainScreen(Screen):
     staircaseSpeed = 40
     gate = False
     staircase = False
+    ramp = False
     s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
                  steps_per_unit=200, speed=8)
 
@@ -123,7 +124,11 @@ class MainScreen(Screen):
         print("Turn on and off staircase here")
 
     def toggleRamp(self):
-        self.s0.go_until_press(1, 6400)
+        self.ramp = not self.ramp
+        if self.ramp:
+            self.s0.start_relative_move(1)
+        else:
+            self.s0.go_until_press(0, 6400)
         print("Move ramp up and down here")
 
     def auto(self):
