@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="pi@widget01-pi.local:22" exclude=".svn;.cvs;.idea;.DS_Store;.hg;*.hprof;*.pyc">
+    <serverData>
+      <paths name="pi@widget01-pi.local:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_162" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
