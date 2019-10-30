@@ -123,13 +123,15 @@ class MainScreen(Screen):
         print("Turn on and off staircase here")
 
     def toggleRamp(self):
-
+        self.s0.go_until_press(1, 6400)
         print("Move ramp up and down here")
 
     def auto(self):
         print("Run through one cycle of the perpetual motion machine")
 
     def setRampSpeed(self, speed):
+        self.s0.set_speed(speed)
+        self.ids.rampspeed.text = "Ramp Speed: " + speed
         print("Set the ramp speed and update slider text")
 
     def setStaircaseSpeed(self, speed):
