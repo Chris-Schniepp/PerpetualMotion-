@@ -95,12 +95,17 @@ class MainScreen(Screen):
     ramp = False
     s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
                  steps_per_unit=200, speed=8)
+    s0.set_speed(3.5)
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         self.initialize()
         cyprus.setup_servo(2)
         cyprus.setup_servo(1)
+
+    def thread_flip(self):
+        y = threading.Thread(target=self.auto, daemon=True)
+        y.start()
 
     def toggleGate(self):
         self.gate = not self.gate
@@ -115,7 +120,7 @@ class MainScreen(Screen):
         self.staircase = not self.staircase
         if self.staircase:
             print(self.staircase)
-            cyprus.set_pwm_values(1, period_value=100000, compare_value=50000,
+            cyprus.set_pwm_values(1, period_value=100000, compare_value=100000,
                                   compare_mode=cyprus.LESS_THAN_OR_EQUAL)
         else:
             print(self.staircase)
@@ -126,23 +131,40 @@ class MainScreen(Screen):
     def toggleRamp(self):
         self.ramp = not self.ramp
         if self.ramp:
-            self.s0.run(1, .5)
-            if cyprus.read_gpio() and 0B0001:
-                self.s0.softStop()
+            self.s0.start_relative_move(29)
         else:
-            self.s0.run(0, .5)
-            if cyprus.read_gpio() and 0B0010:
-                self.s0.softStop()
+            self.s0.start_relative_move(-29)
+
         print("Move ramp up and down here")
 
     def auto(self):
+        """""
+        while True:
+            if cyprus.read_gpio() and 0B0010:
+                pass
+            else:
+                 self.s0.start_relative_move(29)
+            if cyprus.read_gpio() and 0B001:
+                pass
+            else:
+        """""
+        self.toggleRamp()
+        time.sleep(8.5)
+        self.toggleRamp()
+        time.sleep(.5)
+        self.toggleStaircase()
+        time.sleep(5.75)
+        self.toggleGate()
+        time.sleep(1.5)
+        self.toggleStaircase()
+        time.sleep(.5)
+        self.toggleGate()
+
         print("Run through one cycle of the perpetual motion machine")
 
     def setRampSpeed(self, speed):
         self.s0.set_speed(speed)
-        self.ids.rampSpeedLabel.text = "Ramp Speed: %s " % speed
-        self.ramp = not self.ramp
-        self.toggleRamp()
+        self.ids.rampSpeedLabel.text = "Ramp Speed: " + "{:.1f}".format(speed)
         print("Set the ramp speed and update slider text")
 
     def setStaircaseSpeed(self, speed):
