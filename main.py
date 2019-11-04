@@ -95,7 +95,7 @@ class MainScreen(Screen):
     ramp = False
     s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
                  steps_per_unit=200, speed=8)
-    s0.set_speed(3.5)
+    s0.set_speed(3.75)
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
@@ -149,13 +149,13 @@ class MainScreen(Screen):
             else:
         """""
         self.toggleRamp()
-        time.sleep(8.5)
+        time.sleep(7.75)
         self.toggleRamp()
-        time.sleep(.5)
-        self.toggleStaircase()
-        time.sleep(5.75)
-        self.toggleGate()
         time.sleep(1.5)
+        self.toggleStaircase()
+        time.sleep(5.25)
+        self.toggleGate()
+        time.sleep(1.25)
         self.toggleStaircase()
         time.sleep(.5)
         self.toggleGate()
