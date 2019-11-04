@@ -126,9 +126,13 @@ class MainScreen(Screen):
     def toggleRamp(self):
         self.ramp = not self.ramp
         if self.ramp:
-            self.s0.start_relative_move(1)
+            self.s0.run(1, .5)
+            if cyprus.read_gpio() and 0B0001:
+                self.s0.softStop()
         else:
-            self.s0.go_until_press(0, 6400)
+            self.s0.run(0, .5)
+            if cyprus.read_gpio() and 0B0010:
+                self.s0.softStop()
         print("Move ramp up and down here")
 
     def auto(self):
@@ -136,7 +140,9 @@ class MainScreen(Screen):
 
     def setRampSpeed(self, speed):
         self.s0.set_speed(speed)
-        self.ids.rampspeed.text = "Ramp Speed: " + speed
+        self.ids.rampSpeedLabel.text = "Ramp Speed: %s " % speed
+        self.ramp = not self.ramp
+        self.toggleRamp()
         print("Set the ramp speed and update slider text")
 
     def setStaircaseSpeed(self, speed):
