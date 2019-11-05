@@ -96,12 +96,12 @@ class MainScreen(Screen):
     s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
                  steps_per_unit=200, speed=8)
     s0.set_speed(3.75)
+    staircase_speed = 100000
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         self.initialize()
-        cyprus.setup_servo(2)
-        cyprus.setup_servo(1)
+
 
     def thread_flip(self):
         y = threading.Thread(target=self.auto, daemon=True)
@@ -120,7 +120,7 @@ class MainScreen(Screen):
         self.staircase = not self.staircase
         if self.staircase:
             print(self.staircase)
-            cyprus.set_pwm_values(1, period_value=100000, compare_value=100000,
+            cyprus.set_pwm_values(1, period_value=100000, compare_value=self.staircase_speed,
                                   compare_mode=cyprus.LESS_THAN_OR_EQUAL)
         else:
             print(self.staircase)
@@ -150,12 +150,13 @@ class MainScreen(Screen):
         """""
         self.toggleRamp()
         time.sleep(7.75)
+        self.s0.set_speed(4)
         self.toggleRamp()
-        time.sleep(1.5)
+        time.sleep(1)
         self.toggleStaircase()
         time.sleep(5.25)
         self.toggleGate()
-        time.sleep(1.25)
+        time.sleep(1.75)
         self.toggleStaircase()
         time.sleep(.5)
         self.toggleGate()
@@ -168,9 +169,16 @@ class MainScreen(Screen):
         print("Set the ramp speed and update slider text")
 
     def setStaircaseSpeed(self, speed):
+        self.staircase_speed = speed * 1000
+        self.ids.staircaseSpeedLabel.text = "StairCase Speed: " + str(speed) + "%"
+        if self.staircase:
+            cyprus.set_pwm_values(1, period_value=100000, compare_value=(speed * 1000),
+                                  compare_mode=cyprus.LESS_THAN_OR_EQUAL)
         print("Set the staircase speed and update slider text")
 
     def initialize(self):
+        cyprus.setup_servo(2)
+        cyprus.setup_servo(1)
         print("Close gate, stop staircase and home ramp here")
 
     def resetColors(self):
